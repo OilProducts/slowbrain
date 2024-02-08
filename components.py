@@ -1,18 +1,45 @@
 """
 A slow object-oriented implementation of spiking neural networks.
 """
-
-import dataclasses
+import math
 from collections import namedtuple
 
-# Dataclass representing a 3 dimensional coordinate for the neuron
-# @dataclasses.dataclass
-# class Coordinate:
-#     x: int
-#     y: int
-#     z: int
+
 
 Coordinate = namedtuple("Coordinate", "x y z")
+
+class Axon:
+    def __init__(self):
+        self.target_dendrite = None
+        self.trace = 0
+        self.stored_transmitter = 0
+        self.gap_transmitter = 0
+
+    def __str__(self):
+        return f"Axon(target_dendrite_coordinate={self.target_dendrite_coordinate}, trace={self.trace}, stored_transmitter={self.stored_transmitter}, synaptic_transmitter={self.synaptic_transmitter})"
+
+
+    def produce(self):
+        """Produces a signal."""
+        self.trace = 0
+        self.target_dendrite.signal()
+        self.gap_transmitter += self.stored_transmitter
+
+
+    def tick(self):
+        """Updates the axon's state."""
+        self.trace += 1
+        self.gap_transmitter *= 0.93
+        self.stored_transmitter = min(self.stored_transmitter + .05, 1)
+
+
+class Dendrite:
+    def __init__(self):
+        self.trace = 0
+        self.value = 0.0
+
+    def signal(self, value):
+        self.value = value
 
 
 class Synapse:
@@ -21,6 +48,9 @@ class Synapse:
         self.axon_trace = 0
         self.dendrite_trace = 0
         self.value = 0.0
+        self.last_stimulus = -math.inf
+        self.ISI_threshold = 20
+        self.ISI_trace = 0
 
     def __str__(self):
         return f"Synapse(weight={self.weight}, axon_trace={self.axon_trace}, dendrite_trace={self.dendrite_trace}, value={self.value})"
@@ -39,6 +69,7 @@ class Synapse:
         """Updates the synapse's state."""
         self.axon_trace += 1
         self.dendrite_trace += 1
+        self.ISI_trace += 1
         # if self.axon_trace > 10:
         #     self.value = 0.0
         # if self.dendrite_trace > 10:
