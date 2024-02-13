@@ -45,9 +45,9 @@ def dimensional_brain():
 def main():
     brain = dimensional_brain()
     print("Running brain...")
-    for t in range(5000):
+    for t in range(50):
         for neuron in brain.input_neurons:
-            if random.random() < 0.5:
+            if random.random() < 0.9:
                 neuron.spike()
         brain.tick()
         for z in range(10):
