@@ -137,8 +137,8 @@ class Neuron:
         for dendrite in self.dendrites:
             self.potential += dendrite.value * dendrite.weight
         if self.potential >= self.threshold:
-            print(f"Neuron {self.coordinate} spiked!")
-            print(f"Potential: {self.potential}")
+            # print(f"Neuron {self.coordinate} spiked!")
+            # print(f"Potential: {self.potential}")
             self.spike()
         else:
             self.potential *= self.leak
@@ -150,6 +150,7 @@ class Brain:
         self.synapses = []
         self.input_neurons = []
         self.output_neurons = []
+        self.global_reward = 0.0
 
     def __str__(self):
         return f"Brain(neurons={[str(neuron) for neuron in self.neurons]}, synapses={self.synapses})"
